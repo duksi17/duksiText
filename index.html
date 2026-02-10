@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DuksiText — Micic & Skad </title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,300;6..72,500;6..72,700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header>
+    <div class="wrap topbar">
+      <a class="brand" href="#" label="DuksiText home">
+        <div class="logo"></div>
+        <div>
+          <strong>DuksiText</strong>
+          <span>Duksi Micic Skad</span>
+        </div>
+      </a>
+
+      <div class="top-actions">
+        <div class="pill" role="group" label="Active contact selector">
+          <label for="contact">Chat</label>
+          <select id="contact" label="Select contact">
+            <option value="Duksi" selected>Duksi</option>
+            <option value="Micic">Micic</option>
+            <option value="Skad">Skad</option>
+          </select>
+          <svg class="chev" viewBox="0 0 24 24" fill="none">
+            <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+
+        <button class="btn ghost" id="clearBtn" type="button" label="Clear conversation">Clear</button>
+        <button class="btn primary" id="newChatBtn" type="button" label="Start a new chat">New chat</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" label="Messaging app">
+      <!-- Left: app -->
+      <section class="panel app reveal" label="Chat panel">
+        <div class="app-header">
+          <div class="app-title">
+            <div class="kicker">demo UI</div>
+            <h1>This is a test<span class="highlight"> Duksi Micic Skad.</span></h1>
+            <p class="subtitle">
+              A front-end messaging mock built with HTML, CSS, and JavaScript. Messages are stored locally in your browser (no server).
+            </p>
+          </div>
+
+          <div class="status" label="Connection status">
+            <span class="dot"></span>
+            <div>
+              <b id="statusLabel">Connected</b>
+              <small id="statusSub">Local session</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="thread" id="thread" role="log" live="polite" relevant="additions text">
+          <!-- messages injected by JS -->
+        </div>
+
+        <div class="composer" label="Message composer">
+          <div class="compose-row">
+            <div class="field">
+              <textarea id="messageInput" placeholder="Write a message…"></textarea>
+            </div>
+            <button class="btn ghost secondary" id="attachBtn" type="button" label="Insert sparkle message">Spark</button>
+            <button class="btn primary" id="sendBtn" type="button">Send</button>
+          </div>
+
+          <div class="composer-meta">
+            <div>
+              Tip: <span class="kbd">Enter</span> sends • <span class="kbd">Shift</span> + <span class="kbd">Enter</span> new line
+            </div>
+            <div id="charCount" label="Character count">0 / 280</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: side -->
+      <aside class="panel side reveal" label="Settings and details">
+        <div class="module">
+          <h2>Profile</h2>
+          <div class="big" id="profileTitle">Chatting with Duksi</div>
+          <p>
+            This UI is a test
+          </p>
+          <div class="chips" label="Feature chips">
+            <span class="chip">Black + Purple theme</span>
+            <span class="chip">LocalStorage</span>
+            <span class="chip">Scroll reveal</span>
+            <span class="chip">Keyboard send</span>
+          </div>
+        </div>
+
+        <div class="module">
+          <h2>Controls</h2>
+          <div class="controls" role="group" label="Chat controls">
+            <button class="toggle" id="autoReplyToggle" type="button" pressed="true">
+              <span>Auto-reply</span>
+              <span class="switch" ><i></i></span>
+            </button>
+            <button class="toggle" id="soundToggle" type="button" pressed="false">
+              <span>Sound</span>
+              <span class="switch" ><i></i></span>
+            </button>
+            <button class="toggle" id="timestampsToggle" type="button" pressed="true">
+              <span>Timestamps</span>
+              <span class="switch" ><i></i></span>
+            </button>
+            <button class="toggle" id="typingToggle" type="button" pressed="true">
+              <span>Typing…</span>
+              <span class="switch" ><i></i></span>
+            </button>
+          </div>
+
+          <div class="quick" aria-label="Quick messages">
+            <button class="btn ghost" type="button" data-quick="Where are you at?">Quick: location</button>
+            <button class="btn ghost" type="button" data-quick="Send the details when you can.">Quick: details</button>
+            <button class="btn ghost" type="button" data-quick="On it. Give me 10 minutes.">Quick: 10 min</button>
+          </div>
+        </div>
+
+        <div class="module">
+          <h2>Privacy note</h2>
+          <p>
+            Messages are saved only in <b>your browser</b>. Click <b>New chat</b> to start fresh, or <b>Clear</b> to wipe the current thread.
+          </p>
+        </div>
+      </aside>
+    </section>
+
+    <footer>
+      <div class="row">
+        <div>© <span id="year"></span> Text UI demo</div>
+        <div>Made with HTML • CSS • JavaScript</div>
+      </div>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
