@@ -126,9 +126,7 @@ function seedIfEmpty() {
   if (state.threads[state.contact].length) return;
 
   state.threads[state.contact] = [
-    { id: uid(), who: "them", text: "You there?", at: timeStamp() },
-    { id: uid(), who: "you", text: "Yeah. What’s up?", at: timeStamp() },
-    { id: uid(), who: "them", text: "You a bitch", at: timeStamp() },
+    { id: uid(), who: "them", text: "Hey! What's up? How can I help?", at: timeStamp() },
   ];
   save();
 }
@@ -155,23 +153,25 @@ function setContact(name) {
 
 // Typing indicator bubble
 let typingTimer = null;
+let typingBubble = null;
+
 function showTyping() {
   if (!state.typing) return;
   const id = "typing";
   if (threadEl.querySelector(`[data-id="${id}"]`)) return;
 
-  const bubble = document.createElement("article");
-  bubble.className = "msg them";
-  bubble.dataset.id = id;
-  bubble.innerHTML = `
+  typingBubble = document.createElement("article");
+  typingBubble.className = "msg them";
+  typingBubble.dataset.id = id;
+  typingBubble.innerHTML = `
         <div class="meta"><strong>${state.contact}</strong>${state.timestamps ? `<span>${timeStamp()}</span>` : `<span></span>`}</div>
-        <p>Typing<span id="dots">.</span></p>
+        <p>Thinking<span id="dots">.</span></p>
         <span class="tail"></span>
       `;
-  threadEl.appendChild(bubble);
+  threadEl.appendChild(typingBubble);
   threadEl.scrollTop = threadEl.scrollHeight;
 
-  const dots = bubble.querySelector("#dots");
+  const dots = typingBubble.querySelector("#dots");
   let n = 1;
   typingTimer = setInterval(() => {
     n = (n % 3) + 1;
@@ -186,17 +186,11 @@ function hideTyping() {
   }
   const el = threadEl.querySelector(`[data-id="typing"]`);
   if (el) el.remove();
+  typingBubble = null;
 }
 
 // ---------- Actions ----------
-const AUTO_REPLIES = [
-  "Hi.",
-  "Suck dick",
-  "Wow cool didn't ask",
-  "Micic is keeping drekavce",
-  "Cool. Testing complete.",
-  "Bravo",
-];
+const API_BASE = "http://localhost:3000"; // Change if backend is hosted elsewhere
 
 function addMessage(who, text) {
   ensureThread(state.contact);
@@ -210,7 +204,47 @@ function addMessage(who, text) {
   threadEl.scrollTop = threadEl.scrollHeight;
 }
 
-function sendCurrent() {
+async function getAIReply() {
+  try {
+    const contact = state.contact;
+    const userMessage = state.threads[contact][state.threads[contact].length - 1].text;
+
+    // Get recent conversation history (last 6 messages for context)
+    const history = state.threads[contact]
+      .slice(-6)
+      .map(msg => ({
+        role: msg.who === "you" ? "user" : "assistant",
+        content: msg.text
+      }))
+      .slice(0, -1); // Remove the last user message since it's already in the API call
+
+    const response = await fetch(`${API_BASE}/api/chat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        contact: contact,
+        message: userMessage,
+        history: history
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.details || "API error");
+    }
+
+    const data = await response.json();
+    return data.reply;
+  } catch (error) {
+    console.error("Error getting AI reply:", error);
+    // Fallback response if API fails
+    return `Sorry, I'm having trouble responding right now. Error: ${error.message}`;
+  }
+}
+
+async function sendCurrent() {
   const raw = inputEl.value;
   const text = raw.trim();
   if (!text) return;
@@ -225,13 +259,15 @@ function sendCurrent() {
   if (state.autoReply) {
     hideTyping();
     showTyping();
-    // simulate response delay
-    const delay = 700 + Math.random() * 900;
-    setTimeout(() => {
+    
+    try {
+      const reply = await getAIReply();
       hideTyping();
-      const reply = AUTO_REPLIES[Math.floor(Math.random() * AUTO_REPLIES.length)];
       addMessage("them", reply);
-    }, delay);
+    } catch (error) {
+      hideTyping();
+      addMessage("them", "Sorry, something went wrong. Make sure the backend server is running!");
+    }
   }
 }
 
